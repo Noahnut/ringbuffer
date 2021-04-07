@@ -1,64 +1,81 @@
-package Ringbuffer
+package ringbuffer
 
-type ringbuffer struct {
+import "sync"
+
+type ringbuff struct {
 	ringbufferArray []interface{}
 	size            int
 	front           int
 	rear            int
 	len             int
+	mux             *sync.RWMutex
 }
 
-func RingBufferConstruct(size int) ringbuffer {
-	ring := new(ringbuffer)
+func RingBufferConstruct(size int) ringbuff {
+	ring := new(ringbuff)
 	ring.ringbufferArray = make([]interface{}, size)
 	ring.rear = -1
 	ring.size = size
+	ring.mux = &sync.RWMutex{}
 	return *ring
 }
 
-func (this *ringbuffer) enqueue(value interface{}) bool {
+func (this *ringbuff) enqueue(value interface{}) bool {
 	if !this.isFull() {
+		this.mux.Lock()
 		this.rear = (this.rear + 1) % this.size
 		this.ringbufferArray[this.rear] = value
 		this.len++
+		this.mux.Unlock()
 	} else {
 		return false
 	}
 	return true
 }
 
-func (this *ringbuffer) dequeue() bool {
+func (this *ringbuff) dequeue() bool {
 	if !this.isEmpty() {
+		this.mux.Lock()
 		this.front = (this.front + 1) % this.size
 		this.len--
+		this.mux.Unlock()
 	} else {
 		return false
 	}
 	return true
 }
 
-func (this *ringbuffer) GetFront() interface{} {
+func (this *ringbuff) GetFront() interface{} {
+	this.mux.RLock()
+	defer this.mux.RUnlock()
 	if !this.isEmpty() {
 		return this.ringbufferArray[this.front]
 	}
 	return nil
 }
 
-func (this *ringbuffer) GetRear() interface{} {
+func (this *ringbuff) GetRear() interface{} {
+	this.mux.RLock()
+	defer this.mux.RUnlock()
 	if !this.isEmpty() {
 		return this.ringbufferArray[this.rear]
 	}
 	return nil
 }
 
-func (this *ringbuffer) isEmpty() bool {
+func (this *ringbuff) isEmpty() bool {
+	this.mux.RLock()
+	defer this.mux.RUnlock()
 	if this.len == 0 {
 		return true
 	}
+
 	return false
 }
 
-func (this *ringbuffer) isFull() bool {
+func (this *ringbuff) isFull() bool {
+	this.mux.RLock()
+	defer this.mux.RUnlock()
 	if this.len >= this.size {
 		return true
 	}

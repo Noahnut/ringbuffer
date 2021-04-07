@@ -1,4 +1,4 @@
-package Ringbuffer
+package ringbuffer
 
 import (
 	"testing"
