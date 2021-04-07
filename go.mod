@@ -1,3 +1,3 @@
-module github.com/Noahnut/ringbuffer/v1
+module github.com/Noahnut/ringbuffer
 
 go 1.16
