@@ -20,8 +20,8 @@ func RingBufferConstruct(size int) ringbuff {
 	return *ring
 }
 
-func (this *ringbuff) enqueue(value interface{}) bool {
-	if !this.isFull() {
+func (this *ringbuff) Enqueue(value interface{}) bool {
+	if !this.IsFull() {
 		this.mux.Lock()
 		this.rear = (this.rear + 1) % this.size
 		this.ringbufferArray[this.rear] = value
@@ -33,8 +33,8 @@ func (this *ringbuff) enqueue(value interface{}) bool {
 	return true
 }
 
-func (this *ringbuff) dequeue() bool {
-	if !this.isEmpty() {
+func (this *ringbuff) Dequeue() bool {
+	if !this.IsEmpty() {
 		this.mux.Lock()
 		this.front = (this.front + 1) % this.size
 		this.len--
@@ -48,7 +48,7 @@ func (this *ringbuff) dequeue() bool {
 func (this *ringbuff) GetFront() interface{} {
 	this.mux.RLock()
 	defer this.mux.RUnlock()
-	if !this.isEmpty() {
+	if !this.IsEmpty() {
 		return this.ringbufferArray[this.front]
 	}
 	return nil
@@ -57,13 +57,13 @@ func (this *ringbuff) GetFront() interface{} {
 func (this *ringbuff) GetRear() interface{} {
 	this.mux.RLock()
 	defer this.mux.RUnlock()
-	if !this.isEmpty() {
+	if !this.IsEmpty() {
 		return this.ringbufferArray[this.rear]
 	}
 	return nil
 }
 
-func (this *ringbuff) isEmpty() bool {
+func (this *ringbuff) IsEmpty() bool {
 	this.mux.RLock()
 	defer this.mux.RUnlock()
 	if this.len == 0 {
@@ -73,7 +73,7 @@ func (this *ringbuff) isEmpty() bool {
 	return false
 }
 
-func (this *ringbuff) isFull() bool {
+func (this *ringbuff) IsFull() bool {
 	this.mux.RLock()
 	defer this.mux.RUnlock()
 	if this.len >= this.size {
