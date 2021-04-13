@@ -1,4 +1,4 @@
-[![Build Status](https://www.travis-ci.com/Noahnut/ringbuffer.svg?branch=main)](https://www.travis-ci.com/Noahnut/ringbuffer)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Build Status](https://www.travis-ci.com/Noahnut/ringbuffer.svg?branch=main)](https://www.travis-ci.com/Noahnut/ringbuffer)
 # Simple ringbuffer
 Simple thread-free ringbuffer implement by golang
 
